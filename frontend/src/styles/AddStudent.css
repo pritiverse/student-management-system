@@ -1,0 +1,94 @@
+.student-form {
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 0.35cm;
+  }
+  
+  .student-form input,
+  .student-form select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .add-student-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+  
+    cursor: pointer;
+  }
+  
+  .student-form input,
+  .student-form select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .student-form input:focus,
+  .student-form select:focus {
+    border-color: #4c86af;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+    outline: none;
+  }
+  
+  /* Fallback color for placeholder in select dropdown */
+  .student-form select option[value=""] {
+    color: #999;
+  }
+  
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .student-form button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+  
+  .student-form button[type="submit"] {
+    background-color: #1b53c3;
+    color: white;
+  }
+  
+  .student-form button[type="submit"]:hover {
+    background-color: #08349b;
+  }
+  
+  .student-form button[type="button"] {
+    background-color: #2e2e2e;
+    color: white;
+  }
+  
+  .student-form button[type="button"]:hover {
+    background-color: #484848;
+  }
+  
+  .student-form button:active {
+    transform: scale(0.98);
+  }
+
+  .content-area h{
+    margin:12cm;
+
+  }
