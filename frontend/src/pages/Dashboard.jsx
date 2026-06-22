@@ -78,6 +78,7 @@ const Dashboard = () => {
               <th>Student Name</th>
               <th>Email Id</th>
               <th>Department</th>
+              <th>Created at</th>
             </tr>
           </thead>
 
@@ -92,11 +93,12 @@ const Dashboard = () => {
                   <td>{student.regNo}</td>
                   <td>{student.name}</td>
                   <td>{student.email}</td>
-                  <td>
-                    <span className="dept-badge">
-                      {student.department}
-                    </span>
-                  </td>
+                  <td>{student.department}</td>
+                  <td> {new Date(student.createdAt).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  })}</td>
                 </tr>
               ))
             ) : (

@@ -91,6 +91,7 @@ String sequence = String.format("%03d", nextNumber);
             .email(saved.getEmail())
             .phone(saved.getPhone())
             .dob(saved.getDob())
+            .createdAt(saved.getCreatedAt())
             .build();
 }
 
@@ -108,6 +109,7 @@ String sequence = String.format("%03d", nextNumber);
                             .email(saved.getEmail())
                             .phone(saved.getPhone())
                             .dob(saved.getDob())
+                            .createdAt(saved.getCreatedAt())
                             .build();
                     return dto;
                 })
@@ -119,9 +121,20 @@ String sequence = String.format("%03d", nextNumber);
         return repo.count();
     }
     
+    public List<StudentResponseDTO> getStudents(
+        String search,
+        String department) {
 
+        String normalizedSearch = (search == null || search.isBlank()) ? null : search.trim();
+        String normalizedDepartment = (department == null || department.isBlank()) ? null : department.trim();
 
+        return repo.searchStudents(normalizedSearch, normalizedDepartment)
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
 
+    
 
     public StudentResponseDTO updateStudent(
         Long id,
@@ -174,6 +187,7 @@ String sequence = String.format("%03d", nextNumber);
             .email(saved.getEmail())
             .phone(saved.getPhone())
             .dob(saved.getDob())
+            .createdAt(saved.getCreatedAt())
             .build();
 }
 
@@ -201,6 +215,7 @@ String sequence = String.format("%03d", nextNumber);
                 .email(student.getEmail())
                 .phone(student.getPhone())
                 .dob(student.getDob())
+                .createdAt(student.getCreatedAt())
                 .build();
     }
 

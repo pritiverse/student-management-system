@@ -18,6 +18,24 @@ public interface studentRepository extends JpaRepository<Student, Long> {
 
     List<Student> findAllByOrderByCreatedAtDesc();
 
+    @Query("""
+        SELECT s
+        FROM Student s
+        JOIN FETCH s.department d
+        WHERE (:search IS NULL OR :search = '' OR
+               LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')) OR
+               LOWER(s.email) LIKE LOWER(CONCAT('%', :search, '%')) OR
+               LOWER(s.regNo) LIKE LOWER(CONCAT('%', :search, '%')) OR
+               s.Phone LIKE CONCAT('%', :search, '%'))
+          AND (:department IS NULL OR :department = '' OR
+               LOWER(d.name) = LOWER(:department))
+        ORDER BY s.createdAt DESC
+    """)
+    List<Student> searchStudents(
+            @Param("search") String search,
+            @Param("department") String department);
+
+
     // Used to prevent duplicate email inserts
     java.util.Optional<Student> findByEmailIgnoreCase(String email);
 
@@ -57,5 +75,7 @@ Optional<Student> findTopByDepartmentOrderByRegNoDesc(
         GROUP BY s.department.id
         """)
         List<Object[]> getStudentCountByDepartment();
+
+
 
 }

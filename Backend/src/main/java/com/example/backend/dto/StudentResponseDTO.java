@@ -1,6 +1,7 @@
 package com.example.backend.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -17,4 +18,5 @@ public class StudentResponseDTO {
     private String email;
     private String phone;
     private LocalDate dob;
+    private LocalDateTime createdAt;
 }

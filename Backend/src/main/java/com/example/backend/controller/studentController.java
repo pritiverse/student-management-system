@@ -54,8 +54,10 @@ public class studentController {
 
 
     @GetMapping
-    public List<StudentResponseDTO> getAll() {
-        return service.getAll();
+    public List<StudentResponseDTO> getStudents(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String department) {
+        return service.getStudents(search, department);
     }
 
     @GetMapping("/count")
@@ -107,12 +109,7 @@ public long getStudentCount() {
             @RequestParam String regNo) {
         return service.searchByRegNo(regNo);
     }
-    
-    @GetMapping("/filter/dob")
-    public List<StudentResponseDTO> filterByDob(
-            @RequestParam LocalDate dob) {
-        return service.filterByDob(dob);
-    }
+
     
     @GetMapping("/filter/created")
     public List<StudentResponseDTO> filterByCreatedAt(
@@ -128,15 +125,3 @@ public List<Object[]> getCountByDepartment() {
 
 
 }
-
-
-
-
-
-
-
-    
-
-
-    
-
