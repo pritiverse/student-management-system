@@ -19,6 +19,7 @@ const Dashboard = () => {
     phone: "",
     dob: "",
     department: "",
+    enrolledYear:"",
   });
 
   useEffect(() => {
@@ -59,6 +60,7 @@ const Dashboard = () => {
       phone: student.phone,
       dob: student.dob,
       department: student.department,
+      enrolledYear: student.enrolledYear,
     });
   };
 
@@ -95,6 +97,7 @@ const Dashboard = () => {
         phone: "",
         dob: "",
         department: "",
+        enrolledYear:"",
       });
     } catch (err) {
       console.error(err);
@@ -179,6 +182,18 @@ const Dashboard = () => {
               }
             />
 
+        <input
+              type="text"
+              inputMode="numeric"
+              value={formData.enrolledYear}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  enrolledYear: e.target.value,
+                })
+              }
+            />
+
             <select
               value={formData.department}
               onChange={(e) =>
@@ -237,6 +252,7 @@ const Dashboard = () => {
               <th>Email Id</th>
               <th>Phone No</th>
               <th>Department</th>
+              <th>Enrolled Year</th>
               <th>Edit</th>
               <th>Delete</th>
             </tr>
@@ -252,6 +268,7 @@ const Dashboard = () => {
                   <td>{student.email}</td>
                   <td>{student.phone}</td>
                   <td>{student.department}</td>
+                  <td>{student.enrolledYear}</td>
 
                   <td>
                     <button
@@ -280,7 +297,7 @@ const Dashboard = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="no-data">
+                <td colSpan="9" className="no-data">
                   No students found
                 </td>
               </tr>

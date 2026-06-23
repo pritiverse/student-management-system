@@ -19,4 +19,5 @@ public class StudentResponseDTO {
     private String phone;
     private LocalDate dob;
     private LocalDateTime createdAt;
+    private Integer enrolledYear;
 }

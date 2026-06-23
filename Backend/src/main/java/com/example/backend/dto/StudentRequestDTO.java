@@ -14,4 +14,5 @@ public class StudentRequestDTO {
     private String email;
     private String phone;
     private LocalDate dob;
+    private Integer enrolledYear;
 }

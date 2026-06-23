@@ -22,28 +22,70 @@ const AddStudent = () => {
       .catch((err) => console.error(err));
   }, []);
 
+  const validate = () => {
+    const email = String(formData.email || "").trim();
+    const phone = String(formData.phone || "").trim();
+    const enrolledYearRaw = formData.enrolledYear;
+
+    // Email syntax validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) return "Enter a valid email address.";
+
+    // Indian phone validation (10 digits) with optional +91
+    // Accepts: 9876543210 or +919876543210
+    const phoneRegex = /^(?:\+?91)?[6-9]\d{9}$/;
+    if (phone && !phoneRegex.test(phone)) return "Enter a valid Indian phone number (e.g., 9876543210).";
+
+    // enrolledYear validation: reasonable range
+    const enrolledYear = Number(enrolledYearRaw);
+    if (!Number.isInteger(enrolledYear)) return "Enter enrolled year as a whole number.";
+    if (enrolledYear < 1900 || enrolledYear > 2100)
+      return "Enrolled year must be between 1900 and 2100.";
+
+    // DOB required and cannot be in the future
+    const dobStr = formData.dob;
+    if (!dobStr) return "DOB is required.";
+    const dob = new Date(dobStr);
+    const now = new Date();
+    if (dob.toString() === "Invalid Date") return "Enter a valid DOB.";
+    if (dob > now) return "DOB cannot be in the future.";
+
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const errorMsg = validate();
+    if (errorMsg) {
+      alert(errorMsg);
+      return;
+    }
+
     try {
-      const response = await fetch(
-        "http://localhost:8081/api/students",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      // Ensure correct types
+      const payload = {
+        ...formData,
+        enrolledYear: Number(formData.enrolledYear),
+      };
+
+      const response = await fetch("http://localhost:8081/api/students", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to add student");
+        const text = await response.text();
+        throw new Error(text || "Failed to add student");
       }
 
       navigate("/students");
     } catch (err) {
       console.error(err);
+      alert(err.message || "Failed to add student");
     }
   };
 
@@ -102,6 +144,19 @@ const AddStudent = () => {
             setFormData({
               ...formData,
               dob: e.target.value,
+            })
+          }
+        />
+
+<input
+          type="text"
+          placeholder="enrolledYear"
+          required
+          value={formData.enrolledYear}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              enrolledYear: e.target.value,
             })
           }
         />

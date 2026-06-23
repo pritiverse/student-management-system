@@ -54,5 +54,11 @@ public class Student {
 
     private LocalDateTime createdAt;
 
+    private Integer enrolledYear;
+
+    
+
+
+
 
 }

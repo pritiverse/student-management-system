@@ -25,31 +25,25 @@ public class studentService {
         this.deptRepo = deptRepo;
     }
 
-    public String generateRegNo(Department dept) {
+    public String generateRegNo(Department dept, int yr) {
 
-        LocalDateTime now = LocalDateTime.now();
-        String year = String.format("%02d", now.getYear() % 100);
+        
+        String year = String.format("%02d", yr % 100);
 
         String deptCode = dept.getCode();
 
-        
-
         Optional<Student> latestStudent =
-        repo.findTopByDepartmentOrderByRegNoDesc(dept);
+                repo.findTopByDepartmentAndEnrolledYearOrderByRegNoDesc(dept, yr);
 
-int nextNumber = 1;
+        int nextNumber = 1;
 
-if (latestStudent.isPresent()) {
+        if (latestStudent.isPresent()) {
+            String regNo = latestStudent.get().getRegNo();
+            String numericPart = regNo.substring(regNo.length() - 3);
+            nextNumber = Integer.parseInt(numericPart) + 1;
+        }
 
-    String regNo = latestStudent.get().getRegNo();
-
-    String numericPart =
-            regNo.substring(regNo.length() - 3);
-
-    nextNumber = Integer.parseInt(numericPart) + 1;
-}
-String sequence = String.format("%03d", nextNumber);
-
+        String sequence = String.format("%03d", nextNumber);
         return year + deptCode + sequence;
     }
 
@@ -62,6 +56,27 @@ String sequence = String.format("%03d", nextNumber);
 
 
     String normalizedEmail = request.getEmail() == null ? null : request.getEmail().trim().toLowerCase();
+
+    // Basic validations
+    if (request.getName() == null || request.getName().trim().isEmpty()) {
+        throw new IllegalStateException("Student name is required");
+    }
+
+    if (normalizedEmail == null || !com.example.backend.validation.ValidationUtil.isValidEmail(normalizedEmail)) {
+        throw new IllegalStateException("Enter a valid email address");
+    }
+
+    if (request.getPhone() == null || !com.example.backend.validation.ValidationUtil.isValidIndianPhone(request.getPhone())) {
+        throw new IllegalStateException("Enter a valid Indian phone number");
+    }
+
+    if (request.getDob() == null || !com.example.backend.validation.ValidationUtil.isValidDob(request.getDob())) {
+        throw new IllegalStateException("Enter a valid DOB");
+    }
+
+    if (request.getEnrolledYear() == null || !com.example.backend.validation.ValidationUtil.isValidEnrolledYear(request.getEnrolledYear())) {
+        throw new IllegalStateException("Enter a valid enrolled year");
+    }
 
     if (normalizedEmail != null && repo.findByEmailIgnoreCase(normalizedEmail).isPresent()) {
         // will be mapped to 409 by controller
@@ -76,8 +91,9 @@ String sequence = String.format("%03d", nextNumber);
     student.setDob(request.getDob());
     student.setDepartment(dept);
     student.setCreatedAt(LocalDateTime.now());
+    student.setEnrolledYear(request.getEnrolledYear());
 
-    String regNo = generateRegNo(dept);
+    String regNo = generateRegNo(dept,request.getEnrolledYear());
     student.setRegNo(regNo);
 
     Student saved = repo.save(student);
@@ -92,6 +108,7 @@ String sequence = String.format("%03d", nextNumber);
             .phone(saved.getPhone())
             .dob(saved.getDob())
             .createdAt(saved.getCreatedAt())
+            .enrolledYear(saved.getEnrolledYear())
             .build();
 }
 
@@ -110,6 +127,7 @@ String sequence = String.format("%03d", nextNumber);
                             .phone(saved.getPhone())
                             .dob(saved.getDob())
                             .createdAt(saved.getCreatedAt())
+                            .enrolledYear(saved.getEnrolledYear())
                             .build();
                     return dto;
                 })
@@ -156,23 +174,59 @@ String sequence = String.format("%03d", nextNumber);
                 "Email already exists");
     }
 
+    // Validations (same rules as create)
+    if (dto.getName() == null || dto.getName().trim().isEmpty()) {
+        throw new IllegalStateException("Student name is required");
+    }
+
+    if (email == null || !com.example.backend.validation.ValidationUtil.isValidEmail(email)) {
+        throw new IllegalStateException("Enter a valid email address");
+    }
+
+    if (dto.getPhone() == null || !com.example.backend.validation.ValidationUtil.isValidIndianPhone(dto.getPhone())) {
+        throw new IllegalStateException("Enter a valid Indian phone number");
+    }
+
+    if (dto.getDob() == null || !com.example.backend.validation.ValidationUtil.isValidDob(dto.getDob())) {
+        throw new IllegalStateException("Enter a valid DOB");
+    }
+
+    if (dto.getEnrolledYear() == null || !com.example.backend.validation.ValidationUtil.isValidEnrolledYear(dto.getEnrolledYear())) {
+        throw new IllegalStateException("Enter a valid enrolled year");
+    }
+
     existing.setName(dto.getName());
     existing.setEmail(email);
     existing.setPhone(dto.getPhone());
     existing.setDob(dto.getDob());
+
+    Integer oldEnrolledYear = existing.getEnrolledYear();
 
     Department newDepartment = deptRepo
             .findByName(dto.getDepartment())
             .orElseThrow(() ->
                     new RuntimeException("Department not found"));
 
-    if (!existing.getDepartment().getId()
-            .equals(newDepartment.getId())) {
+    boolean departmentChanged =
+            existing.getDepartment() == null ||
+            !existing.getDepartment().getId().equals(newDepartment.getId());
 
+    boolean enrolledYearChanged =
+            oldEnrolledYear == null ||
+            !oldEnrolledYear.equals(dto.getEnrolledYear());
+
+    if (departmentChanged) {
         existing.setDepartment(newDepartment);
+    }
 
-        String newRegNo = generateRegNo(newDepartment);
+    if (enrolledYearChanged) {
+        existing.setEnrolledYear(dto.getEnrolledYear());
+    }
 
+    if (departmentChanged || enrolledYearChanged) {
+        String newRegNo = generateRegNo(
+                departmentChanged ? newDepartment : existing.getDepartment(),
+                dto.getEnrolledYear());
         existing.setRegNo(newRegNo);
     }
 
@@ -188,6 +242,7 @@ String sequence = String.format("%03d", nextNumber);
             .phone(saved.getPhone())
             .dob(saved.getDob())
             .createdAt(saved.getCreatedAt())
+            .enrolledYear(saved.getEnrolledYear())
             .build();
 }
 
@@ -216,6 +271,7 @@ String sequence = String.format("%03d", nextNumber);
                 .phone(student.getPhone())
                 .dob(student.getDob())
                 .createdAt(student.getCreatedAt())
+                .enrolledYear(student.getEnrolledYear())
                 .build();
     }
 

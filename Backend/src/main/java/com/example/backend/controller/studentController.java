@@ -118,6 +118,8 @@ public long getStudentCount() {
         return service.filterByCreatedAt(start, end);
     }
 
+    
+
     @GetMapping("/count-by-department")
 public List<Object[]> getCountByDepartment() {
     return service.getStudentCountByDepartment();

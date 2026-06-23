@@ -66,8 +66,12 @@ public interface studentRepository extends JpaRepository<Student, Long> {
 """)
 String findLatestRegNoByDepartment(@Param("department") Department department);
 
-Optional<Student> findTopByDepartmentOrderByRegNoDesc(
-    Department department);
+    Optional<Student> findTopByDepartmentOrderByRegNoDesc(Department department);
+
+    Optional<Student> findTopByDepartmentAndEnrolledYearOrderByRegNoDesc(
+            Department department,
+            Integer enrolledYear);
+
 
     @Query("""
         SELECT s.department.id, COUNT(s)
